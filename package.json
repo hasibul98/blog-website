@@ -1,27 +1,57 @@
 {
-  "name": "myapp",
+  "name": "react-boiler",
+  "version": "0.1.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
   "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@material-ui/core": "^4.11.0",
+    "@react-oauth/google": "^0.12.2",
+    "@reduxjs/toolkit": "^1.4.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "@tinymce/tinymce-react": "^6.2.1",
+    "axios": "^0.21.0",
+    "dotenv": "^17.2.1",
+    "firebase": "^9.23.0",
+    "quill": "1.3.7",
+    "quill-better-table": "^1.2.10",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-quill": "1.3.3",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "^5.3.4",
+    "react-scripts": "^5.0.1",
+    "styled-loaders-react": "^1.1.0",
+    "tinymce": "^7.9.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "build-quill": "browserify -t [ babelify --global ] quill-build.js -o src/customQuill.js",
+    "postinstall": "npm run build-quill"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.1",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
-    "eslint": "^9.30.1",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^16.3.0",
-    "vite": "^7.0.4"
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-react": "^7.27.1",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.1"
   }
 }

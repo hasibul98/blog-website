@@ -1,0 +1,147 @@
+.admin-panel-container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+}
+
+.admin-panel-container h2 {
+  color: #333;
+  margin-bottom: 25px;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: bold;
+}
+
+/* Updated styles for Quill editor */
+.quill-editor {
+  height: 300px; /* Set a fixed height for the editor */
+  margin-bottom: 50px; /* Space below the editor */
+  display: flex; /* Make it a flex container */
+  flex-direction: column; /* Stack toolbar and editor vertically */
+  position: relative; /* Add position relative */
+  z-index: 1; /* Ensure editor container is above general content */
+  background-color: white; /* Ensure background is white */
+}
+
+.quill-editor .ql-toolbar {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  z-index: 2; /* Ensure toolbar is above other content */
+  background-color: #f0f0f0; /* Light grey toolbar background */
+  border: 1px solid #ddd;
+}
+
+.quill-editor .ql-container {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  flex-grow: 1; /* Allow content area to take remaining space */
+  display: flex; /* Make it a flex container */
+  flex-direction: column; /* Stack editor content vertically */
+  border: 1px solid #ddd; /* Add border to container */
+  border-top: none; /* Remove top border if toolbar has one */
+  background-color: white; /* Ensure background is white */
+}
+
+.quill-editor .ql-editor {
+  min-height: 250px; /* Ensure sufficient height for typing */
+  flex-grow: 1; /* Allow editor content to take remaining space */
+  padding: 12px 15px; /* Add some padding */
+  box-sizing: border-box;
+  z-index: 1; /* Ensure editor is above other content */
+  background-color: white; /* Ensure background is white */
+  position: relative; /* Ensure it respects z-index */
+  user-select: text; /* Allow text selection */
+  caret-color: auto; /* Ensure cursor is visible */
+  line-height: 1.5; /* Improve readability */
+}
+
+/* Ensure the scrollbar appears if content overflows */
+.quill-editor .ql-container.ql-snow {
+  overflow-y: auto;
+}
+
+.form-control,
+.form-control-file {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+.form-control:focus,
+.form-control-file:focus {
+  border-color: #8884d8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(136, 132, 216, 0.2);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.submit-button {
+  padding: 15px 25px;
+  background-color: #8884d8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.submit-button:hover {
+  background-color: #7a76c8;
+  transform: translateY(-2px);
+}
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.message {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
