@@ -46,12 +46,13 @@ const userSlice = createSlice({
       saveState(state.isSignedIn, state.userData);
     },
     setUserData: (state, action) => {
-      // Ensure uid and photoURL are stored when setting user data
+      // Prioritize imageUrl if it's explicitly passed (e.g., Base64 from Profile page)
+      // Otherwise, use photoURL from Firebase Auth user object
       state.userData = action.payload ? {
         uid: action.payload.uid,
         email: action.payload.email,
-        name: action.payload.displayName || action.payload.email, // Use displayName or email
-        imageUrl: action.payload.photoURL, // Use photoURL from Firebase Auth
+        name: action.payload.displayName || action.payload.email,
+        imageUrl: action.payload.imageUrl || action.payload.photoURL, // Use imageUrl if present, else photoURL
         // Add any other relevant user properties here
       } : null;
       saveState(state.isSignedIn, state.userData);

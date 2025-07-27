@@ -56,7 +56,7 @@
   font-weight: 600;
   transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-  margin-bottom: 30px; /* Added margin for spacing */
+  margin-bottom: 30px;
 }
 
 .logout-button-profile:hover {
@@ -149,12 +149,12 @@
 }
 
 .edit-button {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
   color: white;
-  text-decoration: none; /* For Link component */
-  display: inline-flex; /* For Link component */
-  align-items: center; /* For Link component */
-  justify-content: center; /* For Link component */
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .edit-button:hover {
@@ -163,7 +163,7 @@
 }
 
 .delete-button {
-  background-color: #f44336; /* Red */
+  background-color: #f44336;
   color: white;
 }
 
@@ -172,10 +172,75 @@
   transform: translateY(-1px);
 }
 
-.error-message {
-  color: #f44336;
-  font-weight: bold;
+.profile-picture-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
   margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  width: 100%;
+}
+
+.profile-picture-upload-section input[type="file"] {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 300px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.profile-picture-upload-section input[type="file"]::-webkit-file-upload-button {
+  background-color: #8884d8;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-picture-upload-section input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #7a76c8;
+}
+
+.profile-picture-upload-section button {
+  padding: 10px 20px;
+  background-color: #82ca9d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.profile-picture-upload-section button:hover {
+  background-color: #6fb58d;
+  transform: translateY(-1px);
+}
+
+.profile-picture-upload-section button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.upload-message {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.upload-message.success {
+  color: #4CAF50;
+}
+
+.upload-message.error {
+  color: #f44336;
 }
 
 /* Responsive adjustments */
@@ -205,5 +270,9 @@
 
   .user-posts-title {
     font-size: 1.6em;
+  }
+
+  .profile-picture-upload-section input[type="file"] {
+    width: 90%;
   }
 }

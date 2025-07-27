@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
 import { selectUserData, setSignedIn, setUserData } from '../features/userSlice';
-import { auth, db, storage } from '../firebaseConfig'; // Import auth, db, storage
-import { signOut } from 'firebase/auth'; // Import signOut function
+import { auth, db, storage } from '../firebaseConfig';
+import { signOut } from 'firebase/auth'; 
 import {
   collection,
   query,
@@ -22,6 +22,9 @@ const Profile = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [errorPosts, setErrorPosts] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadMessage, setUploadMessage] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   const getExcerpt = (htmlContent, maxLength) => {
     const parser = new DOMParser();
@@ -70,6 +73,10 @@ const Profile = () => {
   useEffect(() => {
     console.log("Profile Component Mounted/userData changed");
     console.log("Current userData:", userData);
+    console.log("Image URL in Redux store (on mount/update):", userData?.imageUrl);
+    if (userData?.imageUrl) {
+      console.log("Profile image URL updated in Redux to:", userData.imageUrl.substring(0, 100) + '...');
+    }
 
     const fetchUserPosts = async () => {
       if (userData?.uid) {
@@ -99,7 +106,7 @@ const Profile = () => {
         }
       } else {
         console.log("User not logged in or userData is missing.");
-        setUserPosts([]); // Clear posts if not logged in
+        setUserPosts([]);
         setLoadingPosts(false);
       }
     };
@@ -109,7 +116,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Sign out from Firebase Auth
+      await signOut(auth);
       dispatch(setSignedIn(false));
       dispatch(setUserData(null));
       history.push("/");
@@ -122,7 +129,6 @@ const Profile = () => {
   const handleDeletePost = async (postId, postContent) => {
     if (window.confirm("Are you sure you want to delete this post?")) {
       try {
-        // 1. Delete images from Firebase Storage
         const parser = new DOMParser();
         const doc = parser.parseFromString(postContent, 'text/html');
         const images = doc.querySelectorAll('img');
@@ -138,10 +144,8 @@ const Profile = () => {
           }
         }
 
-        // 2. Delete document from Firestore
         await deleteDoc(doc(db, 'blogs', postId));
 
-        // 3. Update local state
         setUserPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
         alert('Blog post deleted successfully!');
       } catch (error) {
@@ -150,6 +154,60 @@ const Profile = () => {
       }
     }
   };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 500 * 1024) { // 500 KB limit
+        setUploadMessage('File size exceeds 500 KB. Please choose a smaller image.');
+        setSelectedFile(null);
+      } else {
+        setSelectedFile(file);
+        setUploadMessage('');
+      }
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!selectedFile) {
+      setUploadMessage('Please select an image first.');
+      return;
+    }
+    if (!auth.currentUser) {
+        setUploadMessage('You must be logged in to upload a profile picture.');
+        return;
+    }
+
+    setUploading(true);
+    setUploadMessage('');
+
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(selectedFile); // Read file as Base64
+
+      reader.onloadend = () => {
+        const base64data = reader.result;
+        console.log("Base64 data generated:", base64data.substring(0, 100) + '...');
+        dispatch(setUserData({ ...userData, imageUrl: base64data }));
+        setUploadMessage('Profile picture updated successfully!');
+        setSelectedFile(null);
+        setUploading(false);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error converting to Base64: ", error);
+        setUploadMessage(`Failed to process picture: ${error.message}`);
+        setUploading(false);
+      };
+
+    } catch (error) {
+      console.error("Error uploading profile picture: ", error);
+      setUploadMessage(`Failed to upload picture: ${error.message}`);
+      setUploading(false);
+    }
+  };
+
+  console.log("Image src passed to img tag:", userData?.imageUrl || "https://via.placeholder.com/150"); // Changed to userData?.imageUrl
 
   if (!userData) {
     return (
@@ -165,12 +223,20 @@ const Profile = () => {
       <h2 className="profile-title">User Profile</h2>
       <div className="profile-info">
         <img
-          src={userData.imageUrl || "https://via.placeholder.com/150"}
+          src={userData?.imageUrl || "https://via.placeholder.com/150"} // Changed to userData?.imageUrl
           alt="Profile Avatar"
           className="profile-avatar"
         />
         <p className="profile-detail"><strong>Name:</strong> {userData.name}</p>
         <p className="profile-detail"><strong>Email:</strong> {userData.email}</p>
+
+        <div className="profile-picture-upload-section">
+          <input type="file" accept="image/*" onChange={handleFileChange} />
+          <button onClick={handleImageUpload} disabled={!selectedFile || uploading}>
+            {uploading ? 'Processing...' : 'Change Profile Picture'}
+          </button>
+          {uploadMessage && <p className={`upload-message ${uploadMessage.includes('Failed') ? 'error' : 'success'}`}>{uploadMessage}</p>}
+        </div>
       </div>
       <button onClick={handleLogout} className="logout-button-profile">Logout</button>
 
