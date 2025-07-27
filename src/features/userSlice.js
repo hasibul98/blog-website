@@ -43,11 +43,18 @@ const userSlice = createSlice({
   reducers: {
     setSignedIn: (state, action) => {
       state.isSignedIn = action.payload;
-      saveState(state.isSignedIn, state.userData); // Save to localStorage
+      saveState(state.isSignedIn, state.userData);
     },
     setUserData: (state, action) => {
-      state.userData = action.payload;
-      saveState(state.isSignedIn, state.userData); // Save to localStorage
+      // Ensure uid and photoURL are stored when setting user data
+      state.userData = action.payload ? {
+        uid: action.payload.uid,
+        email: action.payload.email,
+        name: action.payload.displayName || action.payload.email, // Use displayName or email
+        imageUrl: action.payload.photoURL, // Use photoURL from Firebase Auth
+        // Add any other relevant user properties here
+      } : null;
+      saveState(state.isSignedIn, state.userData);
     },
     setInput: (state, action) => {
       state.searchInput = action.payload;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom"; // Import Link and useHistory
+import { Link, useHistory } from "react-router-dom";
 import {
   selectSignedIn,
   setSignedIn,
@@ -34,11 +34,7 @@ const Homepage = () => {
       const user = userCredential.user;
 
       dispatch(setSignedIn(true));
-      dispatch(setUserData({
-        name: user.displayName || user.email,
-        email: user.email,
-        imageUrl: user.photoURL || null,
-      }));
+      dispatch(setUserData(user)); // Pass the full user object directly
       history.push("/blogs");
     } catch (error) {
       console.error("Firebase Email/Password Login Error: ", error);
@@ -57,7 +53,7 @@ const Homepage = () => {
           <p>
             We provide high quality online resource for reading blogs. Just sign
             up and start reading some quality blogs.
-          </p>
+            </p>
           <form onSubmit={handleEmailPasswordLogin} className="login-form">
             <input
               type="email"

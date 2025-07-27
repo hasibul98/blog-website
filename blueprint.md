@@ -1,21 +1,23 @@
-# **Blueprint: Blog Application with Admin Panel and User Features**
+# **Blueprint: Blog Application with Admin Panel and User Features (Updated)**
 
 ## **Overview**
-This project enhances an existing React blog application by integrating a robust administrative panel and expanded user functionalities. The admin panel empowers authorized users to create, manage, and publish blog posts, including the ability to upload images alongside their textual content. This includes the capability to embed images directly within the text content using a rich text editor, allowing for a more dynamic and interactive post creation experience. User engagement is supported through a commenting system, allowing readers to provide feedback on each blog post. New user features include a redesigned navigation bar, automatic redirection to the blog page after successful login, a dedicated user profile page to display user information, and a clear logout option. The design prioritizes a modern, intuitive, and mobile-responsive user interface, adhering to best practices in React development and Firebase integration.
+This project enhances an existing React blog application by integrating a robust administrative panel and expanded user functionalities. The admin panel empowers authorized users to create, manage, and publish blog posts, including the ability to upload images alongside their textual content. This includes the capability to embed images directly within the text content using a rich text editor, allowing for a more dynamic and interactive post creation experience. User engagement is supported through a commenting system, allowing readers to provide feedback on each blog post. New user features include a redesigned navigation bar, automatic redirection to the blog page after successful login, a dedicated user profile page to display user information, and a clear logout option. **Additionally, users can now view, edit, and delete their own blog posts directly from their profile page, providing comprehensive content management capabilities.** The design prioritizes a modern, intuitive, and mobile-responsive user interface, adhering to best practices in React development and Firebase integration.
 
 ## **Detailed Project Outline**
 
 ### **Core Functionality**
-*   **Blog Listing:** Displays all published blog posts.
-*   **Individual Blog View:** Shows a single blog post with its content and associated image (now supporting inline images).
+*   **Blog Listing:** Displays all published blog posts (truncated with HTML content).
+*   **Individual Blog View:** Shows a single blog post with its complete content and associated inline images.
 *   **Commenting System:** Allows users to post comments on individual blog posts.
 *   **Admin Panel:** Provides a dedicated interface for content creators to:
     *   Create new blog posts (title, rich text content with inline images).
-    *   Upload images to Firebase Storage (via rich text editor).
+    *   Upload images to Firebase Storage (via TinyMCE editor).
     *   Publish posts to Firestore.
-*   **User Authentication & Authorization:** (Expanded) Google Sign-in for user authentication. Admin access (future consideration, currently based on direct route access).
-*   **User Profile Page:** Displays logged-in user's information.
+*   **User Authentication & Authorization:** Google Sign-in for user authentication. Admin access (future consideration, currently based on direct route access).
+*   **User Profile Page:** Displays logged-in user's information. **Now also displays the user's authored blog posts with options to Edit and Delete.**
 *   **Logout Functionality:** Allows users to sign out.
+*   **Post Editing Functionality:** Users can edit their existing blog posts.
+*   **Post Deletion Functionality:** Users can delete their existing blog posts, including associated images from Firebase Storage.
 
 ### **Technology Stack**
 *   **Frontend:** React.js
@@ -35,11 +37,12 @@ This project enhances an existing React blog application by integrating a robust
     *   `src/index.js`: Entry point for React application.
     *   `src/firebaseConfig.js`: Firebase initialization and export.
     *   `src/Components/`: Contains reusable React components.
-        *   `AdminPanel.js`: Admin interface for creating posts (now with rich text editor).
-        *   `Blogs.js`: Component to display blog posts and handle comments.
+        *   `AdminPanel.js`: Admin interface for creating new posts. **Will be modified to also handle editing existing posts.**
+        *   `Blogs.js`: Component to display blog posts (truncated) and handle comments.
         *   `Homepage.js`: Main landing page with Google Sign-in.
         *   `Navbar.js`: Navigation bar (redesigned).
-        *   `Profile.js`: User profile page.
+        *   `Profile.js`: User profile page. **Will be modified to display user's posts with edit/delete options.**
+        *   `SingleBlog.js`: Displays a single blog post with full content and comments.
     *   `src/styling/`: CSS files for styling components.
         *   `admin.css`: Styles for the Admin Panel.
         *   `blogs.css`: Styles for blog display.
@@ -55,30 +58,30 @@ This project enhances an existing React blog application by integrating a robust
 *   **Accessibility (A11Y):** Implements features to cater to a diverse user base, adhering to WAI-ARIA standards where applicable.
 *   **Interactivity:** Buttons, checkboxes, sliders, lists, charts, graphs, and other interactive elements will have subtle shadow and color glow effects.
 
-## **Plan for Current Request: Rich Text Editor with Inline Image Posting (TinyMCE)**
-
-The user wants to embed images within the text content of blog posts, similar to Facebook's functionality, using TinyMCE.
+## **Plan for Current Request: User Post Management on Profile Page**
 
 ### **Steps:**
 
-1.  **Ensure TinyMCE is installed:**
-    *   If not already installed, execute `npm install @tinymce/tinymce-react`.
+1.  **Update `src/Components/Profile.js`:**
+    *   Import `collection`, `query`, `where`, `getDocs`, `deleteDoc`, `doc` from `firebase/firestore` and `ref`, `deleteObject` from `firebase/storage`.
+    *   Fetch blog posts from Firestore where `authorId` matches the currently logged-in user's UID.
+    *   Display these posts in a list or card format, showing title and a truncated content preview.
+    *   Add "Edit" and "Delete" buttons next to each post.
+    *   Implement `handleDelete` function:
+        *   Confirm deletion with the user.
+        *   Delete the document from the `blogs` collection in Firestore.
+        *   (Advanced) Parse the HTML content of the deleted blog post to extract image URLs and delete those images from Firebase Storage. This prevents orphaned images.
+        *   Update the local state (`userPosts`) after deletion to reflect changes immediately.
 
-2.  **Modify `src/Components/AdminPanel.js`:**
-    *   Import `Editor` from `@tinymce/tinymce-react`.
-    *   Replace the `textarea` for `content` with `<Editor>`. The `content` state will now hold the HTML string from the editor.
-    *   Configure TinyMCE with an `images_upload_handler` to manage image uploads.
-        *   This handler will take the image file, upload it to Firebase Storage.
-        *   Get the downloadable URL of the uploaded image.
-        *   Return this URL to TinyMCE for insertion into the editor.
-    *   Remove the separate `image` state and `handleImageChange` as TinyMCE will handle image uploads.
-    *   When submitting the form, save the HTML content from TinyMCE to Firestore (instead of plain text and a single image URL).
+2.  **Modify `src/Components/AdminPanel.js` for Editing:**
+    *   Accept a `blogId` prop (e.g., via URL parameter when routing).
+    *   If `blogId` is present, fetch the existing blog post data from Firestore.
+    *   Populate the TinyMCE editor and title input with the fetched data.
+    *   Change the `handleSubmit` logic to `updateDoc` instead of `addDoc` if `blogId` is present.
+    *   Change the button text from "Post Blog" to "Update Blog" when editing.
 
-3.  **Modify `src/Components/Blogs.js`:**
-    *   Instead of rendering `blog.content` as plain text, use `dangerouslySetInnerHTML` to render the HTML content from the rich text editor. This will allow inline images and formatting to display correctly.
-    *   Adjust styling in `blogs.css` if necessary to ensure embedded images are displayed appropriately.
+3.  **Update `src/App.js` for Routing:**
+    *   Add a new route for editing posts, e.g., `<Route path="/edit-blog/:blogId" element={<AdminPanel />} />`.
 
-4.  **Update `src/styling/admin.css` and `src/styling/blogs.css` (if needed):**
-    *   Add any specific styles for TinyMCE editor or the rendered rich content to ensure proper display and responsiveness.
-
-This approach will provide a rich text editing experience where images can be seamlessly inserted within the blog post content using TinyMCE.
+4.  **Update `src/styling/profile.css` (if needed):**
+    *   Add styles for the displayed user posts, edit/delete buttons, and any new UI elements.

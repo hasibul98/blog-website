@@ -56,6 +56,7 @@
   font-weight: 600;
   transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  margin-bottom: 30px; /* Added margin for spacing */
 }
 
 .logout-button-profile:hover {
@@ -84,6 +85,99 @@
   background-color: #0056b3;
 }
 
+.user-posts-title {
+  font-size: 1.8em;
+  color: #8884d8;
+  margin-top: 40px;
+  margin-bottom: 25px;
+  font-weight: bold;
+}
+
+.user-posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.user-post-item {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.user-post-item h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #444;
+  font-size: 1.3em;
+}
+
+.post-excerpt {
+  font-size: 0.95em;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.post-excerpt img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+
+.post-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.edit-button,
+.delete-button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.edit-button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  text-decoration: none; /* For Link component */
+  display: inline-flex; /* For Link component */
+  align-items: center; /* For Link component */
+  justify-content: center; /* For Link component */
+}
+
+.edit-button:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+}
+
+.delete-button {
+  background-color: #f44336; /* Red */
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+  transform: translateY(-1px);
+}
+
+.error-message {
+  color: #f44336;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .profile-container {
@@ -107,5 +201,9 @@
   .logout-button-profile {
     padding: 10px 20px;
     font-size: 1em;
+  }
+
+  .user-posts-title {
+    font-size: 1.6em;
   }
 }

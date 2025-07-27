@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { doc, getDoc, collection, query, where, addDoc, serverTimestamp, orderBy, getDocs } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
 import { useSelector } from 'react-redux';
-import { selectUserData } from '../features/userSlice';
+import { selectUserData } from '../features/userSlice'; // Import selectUserData
 import '../styling/singleBlog.css';
 
 const SingleBlog = () => {
@@ -15,7 +15,8 @@ const SingleBlog = () => {
   const [loadingComments, setLoadingComments] = useState(false);
   const [error, setError] = useState('');
 
-  const userData = useSelector(selectUserData);
+  const userData = useSelector(selectUserData); // Get userData from Redux store
+  const isAuthor = userData?.uid === blog?.authorId; // Check if current user is the author
 
   // Fetch single blog post
   useEffect(() => {
@@ -122,6 +123,11 @@ const SingleBlog = () => {
             By: <Link to={`/author/${blog.authorId}`} className="blog-author-link">{blog.authorName}</Link>
             {blog.createdAt?.toDate && ` on ${blog.createdAt.toDate().toLocaleDateString()}`}
           </p>
+        )}
+        {isAuthor && (
+          <div className="blog-actions">
+            <Link to={`/edit-blog/${blog.id}`} className="edit-blog-button">Edit Post</Link>
+          </div>
         )}
       </div>
       <div className="blog-content-full" dangerouslySetInnerHTML={{ __html: blog.content }} />

@@ -1,16 +1,52 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { db, storage, auth } from '../firebaseConfig';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useParams, useHistory } from 'react-router-dom';
 import '../styling/admin.css';
 
 const AdminPanel = () => {
+    const { blogId } = useParams();
+    const history = useHistory();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const editorRef = useRef(null);
+
+    useEffect(() => {
+        if (blogId) {
+            setIsEditing(true);
+            const fetchBlogPost = async () => {
+                setLoading(true);
+                try {
+                    const docRef = doc(db, 'blogs', blogId);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        setTitle(data.title);
+                        setContent(data.content);
+                    } else {
+                        setMessage('Blog post not found.');
+                        history.push('/admin');
+                    }
+                } catch (error) {
+                    console.error('Error fetching blog post for editing: ', error);
+                    setMessage(`Error loading post: ${error.message}`);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchBlogPost();
+        } else {
+            setIsEditing(false);
+            setTitle('');
+            setContent('');
+        }
+    }, [blogId, history]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,20 +68,36 @@ const AdminPanel = () => {
         }
 
         try {
-            await addDoc(collection(db, 'blogs'), {
-                title,
-                content,
-                createdAt: serverTimestamp(),
-                authorId: auth.currentUser.uid,
-                authorName: auth.currentUser.displayName || auth.currentUser.email,
-            });
+            let postIdToRedirect = blogId; // Default to current blogId if editing
 
-            setMessage('Blog post added successfully!');
+            if (isEditing) {
+                const blogDocRef = doc(db, 'blogs', blogId);
+                await updateDoc(blogDocRef, {
+                    title,
+                    content,
+                    updatedAt: serverTimestamp(),
+                });
+                setMessage('Blog post updated successfully!');
+            } else {
+                const docRef = await addDoc(collection(db, 'blogs'), {
+                    title,
+                    content,
+                    createdAt: serverTimestamp(),
+                    authorId: auth.currentUser.uid,
+                    authorName: auth.currentUser.displayName || auth.currentUser.email,
+                });
+                postIdToRedirect = docRef.id; // Get the ID of the newly created post
+                setMessage('Blog post added successfully!');
+            }
+
+            // Redirect to the SingleBlog page of the created/updated post
+            history.push(`/blogs/${postIdToRedirect}`);
+
             setTitle('');
             setContent('');
         } catch (error) {
-            console.error('Error adding document: ', error);
-            setMessage(`Error adding blog post: ${error.message}`);
+            console.error(isEditing ? 'Error updating document: ' : 'Error adding document: ', error);
+            setMessage(`Error ${isEditing ? 'updating' : 'adding'} blog post: ${error.message}`);
         } finally {
             setLoading(false);
         }
@@ -72,7 +124,7 @@ const AdminPanel = () => {
 
     return (
         <div className="admin-panel-container">
-            <h2>Create New Blog Post</h2>
+            <h2>{isEditing ? 'Edit Blog Post' : 'Create New Blog Post'}</h2>
             <form onSubmit={handleSubmit} className="admin-form">
                 <div className="form-group">
                     <label htmlFor="title">Title:</label>
@@ -107,10 +159,10 @@ const AdminPanel = () => {
                                 'alignright alignjustify | bullist numlist outdent indent | ' +
                                 'link image media table | code preview',
                             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                            images_upload_handler: imageUploadHandler, // Added image upload handler
-                            image_title: true, // Enable image title field in image dialog
-                            automatic_uploads: true, // Enable automatic uploads
-                            file_picker_types: 'image', // Show image file picker
+                            images_upload_handler: imageUploadHandler,
+                            image_title: true,
+                            automatic_uploads: true,
+                            file_picker_types: 'image',
                             file_picker_callback: (cb, value, meta) => {
                                 const input = document.createElement('input');
                                 input.setAttribute('type', 'file');
@@ -121,7 +173,7 @@ const AdminPanel = () => {
                                     const reader = new FileReader();
                                     reader.onload = function () {
                                         const id = 'blobid' + (new Date()).getTime();
-                                        const blobCache =  editorRef.current.editorUpload.blobCache;
+                                        const blobCache = editorRef.current.editorUpload.blobCache;
                                         const base64 = reader.result.split(',')[1];
                                         const blobInfo = blobCache.create(id, file, base64);
                                         blobCache.add(blobInfo);
@@ -136,7 +188,7 @@ const AdminPanel = () => {
                     />
                 </div>
                 <button type="submit" className="submit-button" disabled={loading}>
-                    {loading ? 'Posting...' : 'Post Blog'}
+                    {loading ? (isEditing ? 'Updating...' : 'Posting...') : (isEditing ? 'Update Blog' : 'Post Blog')}
                 </button>
             </form>
             {message && <p className={`message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</p>}
