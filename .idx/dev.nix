@@ -8,7 +8,14 @@
     pkgs.nodejs_20
   ];
   # Sets environment variables in the workspace
-  env = {};
+  env = {
+    REACT_APP_FIREBASE_API_KEY = "YOUR_API_KEY";
+    REACT_APP_FIREBASE_AUTH_DOMAIN = "YOUR_AUTH_DOMAIN";
+    REACT_APP_FIREBASE_PROJECT_ID = "YOUR_PROJECT_ID";
+    REACT_APP_FIREBASE_STORAGE_BUCKET = "YOUR_STORAGE_BUCKET";
+    REACT_APP_FIREBASE_MESSAGING_SENDER_ID = "YOUR_MESSAGING_SENDER_ID";
+    REACT_APP_FIREBASE_APP_ID = "YOUR_APP_ID";
+  };
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [

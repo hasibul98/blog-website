@@ -3,11 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/server": "^11.11.0",
-    "@mantine/core": "^8.2.1",
-    "@mantine/hooks": "^8.2.1",
-    "@mantine/rte": "^5.10.5",
     "@material-ui/core": "^4.11.0",
     "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^1.4.0",
