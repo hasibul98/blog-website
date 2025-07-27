@@ -15,3 +15,6 @@ gsutil cors set cors.json gs:https://3000-firebase-blog-website-1753407691451.cl
 
 https://cloud.google.com/sdk/docs/install
 
+
+delete google cloud sdk
+

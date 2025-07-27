@@ -114,6 +114,16 @@ const Profile = () => {
     fetchUserPosts();
   }, [userData]);
 
+  // Effect to clear upload message after 2 seconds
+  useEffect(() => {
+    if (uploadMessage) {
+      const timer = setTimeout(() => {
+        setUploadMessage('');
+      }, 2000); // 2 seconds
+      return () => clearTimeout(timer); // Cleanup on unmount or message change
+    }
+  }, [uploadMessage]);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -187,8 +197,8 @@ const Profile = () => {
 
       reader.onloadend = () => {
         const base64data = reader.result;
-        console.log("Base64 data generated:", base64data.substring(0, 100) + '...');
-        dispatch(setUserData({ ...userData, imageUrl: base64data }));
+        console.log("Base64 data generated:", base64data.substring(0, 100) + '...'); // Log first 100 chars
+        dispatch(setUserData({ ...userData, imageUrl: base64data })); // Update Redux with Base64
         setUploadMessage('Profile picture updated successfully!');
         setSelectedFile(null);
         setUploading(false);
@@ -207,7 +217,7 @@ const Profile = () => {
     }
   };
 
-  console.log("Image src passed to img tag:", userData?.imageUrl || "https://via.placeholder.com/150"); // Changed to userData?.imageUrl
+  console.log("Image src passed to img tag:", userData?.imageUrl || "https://via.placeholder.com/150");
 
   if (!userData) {
     return (
@@ -223,7 +233,7 @@ const Profile = () => {
       <h2 className="profile-title">User Profile</h2>
       <div className="profile-info">
         <img
-          src={userData?.imageUrl || "https://via.placeholder.com/150"} // Changed to userData?.imageUrl
+          src={userData?.imageUrl || "https://via.placeholder.com/150"}
           alt="Profile Avatar"
           className="profile-avatar"
         />
