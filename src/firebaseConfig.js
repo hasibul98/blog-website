@@ -1,25 +1,21 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
-// Values are now loaded from environment variables
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  // measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID, // Uncomment if you have this in .env
+  apiKey: "AIzaSyCCUGeKcuwwOR9I-_67CFTeOO7wU6csxIg",
+  authDomain: "blog-website-dcfe5.firebaseapp.com",
+  projectId: "blog-website-dcfe5",
+  storageBucket: "blog-website-dcfe5.firebasestorage.app",
+  messagingSenderId: "38737969897",
+  appId: "1:38737969897:web:f8d6b1f3d257bb4c452678"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
+const storage = getStorage(app); 
 
-export { auth, db, storage };
+export { auth, db, storage, app };

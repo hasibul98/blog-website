@@ -12,12 +12,6 @@ const AdminPanel = () => {
     const [loading, setLoading] = useState(false);
     const editorRef = useRef(null);
 
-    const log = () => {
-        if (editorRef.current) {
-            console.log(editorRef.current.getContent());
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -61,6 +55,20 @@ const AdminPanel = () => {
         setContent(content);
     };
 
+    const imageUploadHandler = (blobInfo, success, failure) => {
+        const file = blobInfo.blob();
+        const storageRef = ref(storage, `images/blog_posts/${file.name}`);
+
+        uploadBytes(storageRef, file).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then((downloadURL) => {
+                success(downloadURL);
+            }).catch(error => {
+                failure('Failed to get download URL: ' + error.message);
+            });
+        }).catch(error => {
+            failure('Image upload failed: ' + error.message);
+        });
+    };
 
     return (
         <div className="admin-panel-container">
@@ -91,13 +99,39 @@ const AdminPanel = () => {
                             plugins: [
                                 'advlist autolink lists link image charmap print preview anchor',
                                 'searchreplace visualblocks code fullscreen',
-                                'insertdatetime media table paste code help wordcount', 'table'
+                                'insertdatetime media table paste code help wordcount',
+                                'table'
                             ],
                             toolbar: 'undo redo | formatselect | ' +
                                 'bold italic underline | alignleft aligncenter ' +
                                 'alignright alignjustify | bullist numlist outdent indent | ' +
-                                'link image media table | code preview' + 'bullist numlist outdent indent | link image media | code',
-                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                                'link image media table | code preview',
+                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                            images_upload_handler: imageUploadHandler, // Added image upload handler
+                            image_title: true, // Enable image title field in image dialog
+                            automatic_uploads: true, // Enable automatic uploads
+                            file_picker_types: 'image', // Show image file picker
+                            file_picker_callback: (cb, value, meta) => {
+                                const input = document.createElement('input');
+                                input.setAttribute('type', 'file');
+                                input.setAttribute('accept', 'image/*');
+
+                                input.onchange = function () {
+                                    const file = this.files[0];
+                                    const reader = new FileReader();
+                                    reader.onload = function () {
+                                        const id = 'blobid' + (new Date()).getTime();
+                                        const blobCache =  editorRef.current.editorUpload.blobCache;
+                                        const base64 = reader.result.split(',')[1];
+                                        const blobInfo = blobCache.create(id, file, base64);
+                                        blobCache.add(blobInfo);
+                                        cb(blobInfo.blobUri(), { title: file.name });
+                                    };
+                                    reader.readAsDataURL(file);
+                                };
+
+                                input.click();
+                            }
                         }}
                     />
                 </div>

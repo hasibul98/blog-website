@@ -33,54 +33,6 @@
   font-weight: bold;
 }
 
-/* Updated styles for Quill editor */
-.quill-editor {
-  height: 300px; /* Set a fixed height for the editor */
-  margin-bottom: 50px; /* Space below the editor */
-  display: flex; /* Make it a flex container */
-  flex-direction: column; /* Stack toolbar and editor vertically */
-  position: relative; /* Add position relative */
-  z-index: 1; /* Ensure editor container is above general content */
-  background-color: white; /* Ensure background is white */
-}
-
-.quill-editor .ql-toolbar {
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-  z-index: 2; /* Ensure toolbar is above other content */
-  background-color: #f0f0f0; /* Light grey toolbar background */
-  border: 1px solid #ddd;
-}
-
-.quill-editor .ql-container {
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  flex-grow: 1; /* Allow content area to take remaining space */
-  display: flex; /* Make it a flex container */
-  flex-direction: column; /* Stack editor content vertically */
-  border: 1px solid #ddd; /* Add border to container */
-  border-top: none; /* Remove top border if toolbar has one */
-  background-color: white; /* Ensure background is white */
-}
-
-.quill-editor .ql-editor {
-  min-height: 250px; /* Ensure sufficient height for typing */
-  flex-grow: 1; /* Allow editor content to take remaining space */
-  padding: 12px 15px; /* Add some padding */
-  box-sizing: border-box;
-  z-index: 1; /* Ensure editor is above other content */
-  background-color: white; /* Ensure background is white */
-  position: relative; /* Ensure it respects z-index */
-  user-select: text; /* Allow text selection */
-  caret-color: auto; /* Ensure cursor is visible */
-  line-height: 1.5; /* Improve readability */
-}
-
-/* Ensure the scrollbar appears if content overflows */
-.quill-editor .ql-container.ql-snow {
-  overflow-y: auto;
-}
-
 .form-control,
 .form-control-file {
   width: 100%;

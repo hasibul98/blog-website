@@ -19,7 +19,7 @@ This project enhances an existing React blog application by integrating a robust
 
 ### **Technology Stack**
 *   **Frontend:** React.js
-*   **Rich Text Editor:** `react-quill` for advanced content creation.
+*   **Rich Text Editor:** `TinyMCE` via `@tinymce/tinymce-react` for advanced content creation.
 *   **Styling:** CSS Modules (or existing project CSS files) for custom designs. Emphasis on modern components and responsive design.
 *   **Routing:** `react-router-dom` (Version 5 for compatibility with existing codebase).
 *   **State Management:** React's built-in hooks (`useState`, `useContext`) for local state, and Redux Toolkit (`react-redux`, `@reduxjs/toolkit`) for global user state.
@@ -55,31 +55,30 @@ This project enhances an existing React blog application by integrating a robust
 *   **Accessibility (A11Y):** Implements features to cater to a diverse user base, adhering to WAI-ARIA standards where applicable.
 *   **Interactivity:** Buttons, checkboxes, sliders, lists, charts, graphs, and other interactive elements will have subtle shadow and color glow effects.
 
-## **Plan for Current Request: Rich Text Editor with Inline Image Posting**
+## **Plan for Current Request: Rich Text Editor with Inline Image Posting (TinyMCE)**
 
-The user wants to embed images within the text content of blog posts, similar to Facebook's functionality.
+The user wants to embed images within the text content of blog posts, similar to Facebook's functionality, using TinyMCE.
 
 ### **Steps:**
 
-1.  **Install `react-quill`:**
-    *   Execute `npm install react-quill quill` to add the necessary libraries.
+1.  **Ensure TinyMCE is installed:**
+    *   If not already installed, execute `npm install @tinymce/tinymce-react`.
 
 2.  **Modify `src/Components/AdminPanel.js`:**
-    *   Import `ReactQuill` and its CSS (`quill.snow.css`).
-    *   Replace the `textarea` for `content` with `<ReactQuill>`. The `content` state will now hold the HTML string from the editor.
-    *   Implement a custom image handler (`imageHandler` function) for `ReactQuill`'s toolbar.
-        *   This handler will open a file input dialog, allow the user to select an image.
-        *   Upload the selected image to Firebase Storage.
+    *   Import `Editor` from `@tinymce/tinymce-react`.
+    *   Replace the `textarea` for `content` with `<Editor>`. The `content` state will now hold the HTML string from the editor.
+    *   Configure TinyMCE with an `images_upload_handler` to manage image uploads.
+        *   This handler will take the image file, upload it to Firebase Storage.
         *   Get the downloadable URL of the uploaded image.
-        *   Insert this URL into the `ReactQuill` editor at the current cursor position.
-    *   Remove the separate `image` state and `handleImageChange` as `ReactQuill` will handle image uploads.
-    *   When submitting the form, save the HTML content from `ReactQuill` to Firestore (instead of plain text and a single image URL).
+        *   Return this URL to TinyMCE for insertion into the editor.
+    *   Remove the separate `image` state and `handleImageChange` as TinyMCE will handle image uploads.
+    *   When submitting the form, save the HTML content from TinyMCE to Firestore (instead of plain text and a single image URL).
 
 3.  **Modify `src/Components/Blogs.js`:**
     *   Instead of rendering `blog.content` as plain text, use `dangerouslySetInnerHTML` to render the HTML content from the rich text editor. This will allow inline images and formatting to display correctly.
     *   Adjust styling in `blogs.css` if necessary to ensure embedded images are displayed appropriately.
 
 4.  **Update `src/styling/admin.css` and `src/styling/blogs.css` (if needed):**
-    *   Add any specific styles for `react-quill` editor or the rendered rich content to ensure proper display and responsiveness.
+    *   Add any specific styles for TinyMCE editor or the rendered rich content to ensure proper display and responsiveness.
 
-This approach will provide a rich text editing experience where images can be seamlessly inserted within the blog post content.
+This approach will provide a rich text editing experience where images can be seamlessly inserted within the blog post content using TinyMCE.
